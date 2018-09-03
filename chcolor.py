@@ -20,19 +20,24 @@ def chCollor(PATH,NEXT_COLOR):
             for ii in range(j):
                 if not img.getpixel((i,ii))[3] == 0:
                     alpha = img.getpixel((i,ii))[3]
-                    img.putpixel((i,ii),(int(NEXT_COLOR[0]),int(NEXT_COLOR[1]),int(NEXT_COLOR[2]),alpha))
+                    img.putpixel((i,ii),(NEXT_COLOR[0],NEXT_COLOR[1],NEXT_COLOR[2],alpha))
         if not os.path.exists(os.path.join(PATH,'out')):
             os.makedirs(os.path.join(PATH, 'out'))
         img.save(os.path.join(PATH, 'out',png))
         logging.info('save {}'.format(png))
 
+def convert_to_RJB(color):
+    if ',' in color:
+        return list(map(int, color.replace('(', '').replace(')', '').split(',')))
+    else:
+        return list(int(color[i:i+2], 16) for i in (0, 2, 4))
+    
+
+
 if __name__ == "__main__":
     if len(sys.argv)>1:
         if '-nc' in sys.argv:
-            NEXT_COLOR = sys.argv[sys.argv.index('-nc') + 1].replace('(','').replace(')','').split(',')
-            if len(NEXT_COLOR)<2:
-                print('color must be RJB format. For example  "(255,255,255)"')
-                exit(0)
+            NEXT_COLOR = convert_to_RJB(sys.argv[sys.argv.index('-nc') + 1])
         if '-p' in sys.argv:
             PATH = sys.argv[sys.argv.index('-p') + 1]
         if '-l' in sys.argv:
