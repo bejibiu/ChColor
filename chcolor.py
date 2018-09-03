@@ -37,7 +37,14 @@ def convert_to_RJB(color):
 if __name__ == "__main__":
     if len(sys.argv)>1:
         if '-nc' in sys.argv:
-            NEXT_COLOR = convert_to_RJB(sys.argv[sys.argv.index('-nc') + 1])
+            try:
+                NEXT_COLOR = convert_to_RJB(sys.argv[sys.argv.index('-nc') + 1])
+            except IndexError:
+                print(
+                    'You may have entered a color that starts with #. \r\nOn the command line\
+,the comment that follows this character.\r\n\
+Re-enter without character #')
+                exit(0)
         if '-p' in sys.argv:
             PATH = sys.argv[sys.argv.index('-p') + 1]
         if '-l' in sys.argv:
