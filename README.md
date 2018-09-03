@@ -3,7 +3,7 @@
 
 example:
 
-    python chcolor -nc "(255,255,255)" -p /tmp -l 10"
+    python chcolor.py -nc "(255,255,255)" -p /tmp -l 10"
 
 `-nc` - Next color. Сolor which change
 `-p` - Path with images]
