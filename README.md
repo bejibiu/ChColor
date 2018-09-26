@@ -5,6 +5,9 @@ example:
 
     python chcolor.py -nc "(255,255,255)" -p /tmp -l 10"
 
+    python chcolor.py -nc "103A6E" -p /tmp -l 10"
+
+
 `-nc` - Next color. Сolor which change
 `-p` - Path with images]
 `-l` - Log level (10.20.30)
