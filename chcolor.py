@@ -13,7 +13,7 @@ def chCollor(PATH,NEXT_COLOR):
     logging.info('Fount %d images' %len(pngs))
     for png in pngs: 
         logging.debug('Change %s images' %png)
-        img = Image.open(png)
+        img = Image.open(os.path.join(PATH,png))
         k,j =  img.size
         # img.show()
         for  i in range(k):
