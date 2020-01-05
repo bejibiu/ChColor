@@ -1,18 +1,14 @@
+import argparse
 import logging
 import os
-import sys
 
 from PIL import Image
-
-PATH = './img/'
-LEVEL = logging.WARNING
-NEXT_COLOR = [255, 255, 255]  # #D41920
 
 
 def chCollor(PATH, NEXT_COLOR):
     pngs = [f for f in os.listdir(PATH) if f.endswith('png')]
     svgs = [f for f in os.listdir(PATH) if f.endswith('svg')]
-    logging.info('Fount %d images' % (len(pngs)+len(svgs)))
+    logging.debug('Fount %d images' % (len(pngs)+len(svgs)))
     if not os.path.exists(os.path.join(PATH, 'out')):
         os.makedirs(os.path.join(PATH, 'out'))
     for png in pngs:
@@ -33,7 +29,7 @@ def chColorPng(png, PATH, NEXT_COLOR):
                 img.putpixel((i, ii), (NEXT_COLOR[0], NEXT_COLOR[1],
                                        NEXT_COLOR[2], alpha))
     img.save(os.path.join(PATH, 'out', png))
-    logging.info('save {}'.format(png))
+    logging.debug('save {}'.format(png))
 
 
 def chColorSvg(svg, PATH, NEXT_COLOR):
@@ -44,7 +40,7 @@ def chColorSvg(svg, PATH, NEXT_COLOR):
     new_img = img.replace('/>', f' fill="#{next_color_hex}" />')
     with open(os.path.join(PATH, 'out', svg), 'w') as img_save_file:
         img_save_file.write(new_img)
-    logging.info('save {}'.format(svg))
+    logging.debug('save {}'.format(svg))
 
 
 def split_list_from_collor(color):
@@ -53,26 +49,21 @@ def split_list_from_collor(color):
 
 def convert_to_RJB(color):
     if ',' in color:
-        return split_list_from_collor()
-    else:
-        return list(int(color[i:i+2], 16) for i in (0, 2, 4))
+        return split_list_from_collor(color)
+    color = color[1:] if color.startswith('#') else color
+    return list(int(color[i:i+2], 16) for i in (0, 2, 4))
 
 
 if __name__ == "__main__":
-    if len(sys.argv) > 1:
-        if '-nc' in sys.argv:
-            try:
-                NEXT_COLOR = convert_to_RJB(
-                            sys.argv[sys.argv.index('-nc') + 1])
-            except IndexError:
-                print(
-                    'You may have entered a color that starts with #. \r\nOn the command line\
-,the comment that follows this character.\r\n\
-Re-enter without character #')
-                exit(0)
-        if '-p' in sys.argv:
-            PATH = sys.argv[sys.argv.index('-p') + 1]
-        if '-l' in sys.argv:
-            LEVEL = int(sys.argv[sys.argv.index('-l') + 1])
-    logging.basicConfig(format='%(asctime)s %(message)s', level=LEVEL)
-    chCollor(PATH, NEXT_COLOR)
+    parser = argparse.ArgumentParser(description='Сhanges all colors of all \
+        images in the specified folder to the specified one')
+    parser.add_argument('-c', '--color', default='D41920',
+                        help="color to chage")
+    parser.add_argument('-p', '--path', default='./img/',
+                        help="set path to picture")
+    parser.add_argument('--verbose', '-v', action='store_true', default=0)
+    args = parser.parse_args()
+    NEXT_COLOR = convert_to_RJB(args.color)
+    logging.basicConfig(format='%(asctime)s %(message)s',
+                        level=logging.DEBUG if args.verbose else logging.ERROR)
+    chCollor(args.path, NEXT_COLOR)
